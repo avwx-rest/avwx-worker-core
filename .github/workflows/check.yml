@@ -1,0 +1,46 @@
+name: Check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint, types, tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          # Both entries of the hatch-test matrix.
+          python-version: |
+            3.12
+            3.14
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Install hatch
+        run: uv tool install hatch
+
+      - name: Verify uv.lock matches pyproject.toml
+        run: uv lock --check
+
+      - name: Lint and format
+        run: |
+          hatch check code
+          hatch check fmt
+
+      - name: Type check
+        run: hatch run types:check
+
+      - name: Test
+        run: hatch test -a
