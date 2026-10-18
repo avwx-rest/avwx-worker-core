@@ -22,7 +22,7 @@ dependencies = [
 ]
 
 [project.urls]
-Source = "https://github.com/devdupont/avwx-worker-core"
+Source = "https://github.com/avwx-rest/avwx-worker-core"
 
 [tool.hatch.version]
 path = "avwx_worker_core/__about__.py"

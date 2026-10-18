@@ -16,14 +16,15 @@ Functions timer, a Container Apps job, or a local shell.
 
 ## Using it
 
-Workers install it from a pinned commit, the way `avwx-api` pins `avwx-api-core`:
+Workers install it from a pinned commit's archive. Unlike a git source, a tarball installs in
+CI, on the Azure Functions Oryx build, and in a slim container image without git:
 
 ```toml
 [project]
 dependencies = ["avwx-worker-core"]
 
 [tool.uv.sources]
-avwx-worker-core = { git = "https://github.com/devdupont/avwx-worker-core", rev = "<commit>" }
+avwx-worker-core = { url = "https://github.com/avwx-rest/avwx-worker-core/archive/<commit>.tar.gz" }
 ```
 
 A worker repo defines its settings and one shell:
