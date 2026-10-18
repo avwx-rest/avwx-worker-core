@@ -1,0 +1,110 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "avwx-worker-core"
+dynamic = ["version"]
+description = "Shared runtime for AVWX background workers: settings, logging, error reporting, retry, MongoDB, and mail"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+authors = [
+    { name = "Michael duPont", email = "michael@dupont.dev" },
+]
+dependencies = [
+    "httpx2>=2.14",
+    "pydantic>=2.12",
+    "pydantic-settings>=2.12",
+    "pymongo>=4.16",
+    "python-json-logger>=3.2",
+    "sentry-sdk>=2.35",
+]
+
+[project.urls]
+Source = "https://github.com/devdupont/avwx-worker-core"
+
+[tool.hatch.version]
+path = "avwx_worker_core/__about__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["avwx_worker_core"]
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+[tool.hatch.envs.types]
+installer = "uv"
+extra-dependencies = [
+    "mypy>=1.18",
+    "pytest",
+    "pytest-asyncio>=1.0",
+]
+[tool.hatch.envs.types.scripts]
+check = "mypy {args:avwx_worker_core tests}"
+
+[tool.hatch.envs.hatch-test]
+installer = "uv"
+extra-dependencies = [
+    "pytest-asyncio>=1.0",
+    "pytest-cov",
+]
+
+[[tool.hatch.envs.hatch-test.matrix]]
+python = ["3.12", "3.14"]
+
+[tool.pytest.ini_options]
+addopts = """\
+    --cov avwx_worker_core \
+    --cov-report term-missing \
+    --no-cov-on-fail \
+"""
+asyncio_mode = "auto"
+markers = [
+    "integration: requires a running MongoDB",
+    "unit: pure unit test, no external dependencies",
+]
+
+[tool.coverage.run]
+source_pkgs = ["avwx_worker_core"]
+branch = true
+parallel = true
+
+[tool.coverage.report]
+fail_under = 90
+exclude_lines = [
+    "no cov",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]
+
+[tool.mypy]
+strict = true
+show_error_codes = true
+
+[tool.ruff]
+line-length = 110
+
+[tool.ruff.lint]
+ignore = [
+    "PLR2004",  # Magic value comparison
+    "S101",     # Assert - used throughout the test suite
+    "TRY300",   # Return in try body
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*" = [
+    "ARG001",
+    "ARG002",
+    "EM101",
+    "FBT001",
+    "PLR2004",
+    "S101",
+    "S105",
+    "S106",
+    "S107",
+    "SLF001",
+    "TRY003",
+]
